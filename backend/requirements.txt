@@ -1,0 +1,23 @@
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+sqlalchemy==2.0.23
+asyncpg==0.31.0
+pydantic==2.12.5
+python-jose[cryptography]==3.3.0
+passlib[bcrypt]==1.7.4
+python-multipart==0.0.6
+qdrant-client==1.16.2
+cohere==5.11.0
+psycopg2-binary==2.9.11
+langchain-community==0.4.1
+python-dotenv==1.0.0
+better-exceptions==0.3.3
+pytest==7.4.3
+httpx==0.25.2
+# requirements.txt
+fastapi
+uvicorn
+sqlalchemy>=2.0
+asyncpg>=0.30
+# or if using SQLAlchemy 1.4 style:
+# sqlalchemy[asyncio]>=1.4

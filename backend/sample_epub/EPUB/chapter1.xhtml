@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:epub="http://www.idpf.org/2007/ops" lang="en">
+<head>
+  <title>Chapter 1: What is Machine Learning?</title>
+  <link rel="stylesheet" type="text/css" href="style.css"/>
+</head>
+<body>
+  <section epub:type="chapter">
+    <h1>Chapter 1: What is Machine Learning?</h1>
+    
+    <p>Machine learning (ML) is a type of artificial intelligence that allows software applications to become more accurate at predicting outcomes without being explicitly programmed to do so. Machine learning algorithms use historical data as input to predict new output values.</p>
+    
+    <p>There are three main types of machine learning: supervised learning, unsupervised learning, and reinforcement learning. Supervised learning algorithms are trained using labeled examples, such as an input where the desired output is known.</p>
+    
+    <blockquote class="selection-area">
+      <p><strong>Key Concept:</strong> In supervised learning, each example is a pair consisting of an input object (typically a vector) and a desired output value (also called the supervisory signal). A supervised learning algorithm analyzes the training data and produces a function, which can be used for mapping new examples.</p>
+    </blockquote>
+    
+    <p>Unsupervised learning, on the other hand, does not have labeled outputs. The algorithm tries to identify patterns in the data without guidance. Reinforcement learning is about taking suitable action to maximize reward in a particular situation.</p>
+  </section>
+  
+  <!-- RAG Chatbot Integration -->
+  <div id="rag-chatbot-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 1000;"></div>
+  
+  <script>
+    // Configuration for the chatbot widget
+    window.RAG_CHATBOT_CONFIG = {
+      apiUrl: 'http://localhost:8000',
+      collectionId: '12345678-1234-5678-1234-567812345678', // Replace with actual collection ID
+      containerId: 'rag-chatbot-container',
+      theme: 'light'
+    };
+  </script>
+  <script src="embed_widget.js"></script>
+</body>
+</html>

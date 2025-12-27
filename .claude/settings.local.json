@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mkdir -p frontend/src/components/Book)",
+      "Bash(npm install react-markdown remark-gfm rehype-raw)"
+    ]
+  }
+}

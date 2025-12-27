@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Interactive Book with RAG Chatbot</title>
+    <style>
+        body {
+            font-family: Georgia, serif;
+            line-height: 1.6;
+            margin: 0;
+            padding: 20px;
+            background-color: #f8f4e9;
+            color: #333;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.05);
+            position: relative;
+        }
+        
+        h1 {
+            color: #2c3e50;
+            border-bottom: 2px solid #3498db;
+            padding-bottom: 10px;
+        }
+        
+        h2 {
+            color: #34495e;
+        }
+        
+        p {
+            margin-bottom: 1em;
+        }
+        
+        .chapter {
+            margin-bottom: 2em;
+        }
+        
+        .highlight {
+            background-color: #fffacd;
+            padding: 2px 4px;
+        }
+        
+        .selection-area {
+            border: 2px dashed #3498db;
+            padding: 15px;
+            margin: 20px 0;
+            background-color: #f8f9fa;
+        }
+        
+        button {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        
+        button:hover {
+            background: #2980b9;
+        }
+        
+        /* Chatbot widget will be injected here */
+        #rag-chatbot-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 10000;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Introduction to Machine Learning</h1>
+            <p>A Comprehensive Guide for Beginners</p>
+        </header>
+        
+        <section class="chapter">
+            <h2>Chapter 1: What is Machine Learning?</h2>
+            <p>Machine learning (ML) is a type of artificial intelligence that allows software applications to become more accurate at predicting outcomes without being explicitly programmed to do so. Machine learning algorithms use historical data as input to predict new output values.</p>
+            
+            <p>There are three main types of machine learning: supervised learning, unsupervised learning, and reinforcement learning. Supervised learning algorithms are trained using labeled examples, such as an input where the desired output is known.</p>
+            
+            <div class="selection-area">
+                <p><strong>Selectable Text Example:</strong> In supervised learning, each example is a pair consisting of an input object (typically a vector) and a desired output value (also called the supervisory signal). A supervised learning algorithm analyzes the training data and produces a function, which can be used for mapping new examples.</p>
+            </div>
+            
+            <p>Unsupervised learning, on the other hand, does not have labeled outputs. The algorithm tries to identify patterns in the data without guidance. Reinforcement learning is about taking suitable action to maximize reward in a particular situation.</p>
+        </section>
+        
+        <section class="chapter">
+            <h2>Chapter 2: Key Algorithms</h2>
+            <p>Some of the most important machine learning algorithms include:</p>
+            <ul>
+                <li>Linear Regression</li>
+                <li>Logistic Regression</li>
+                <li>Decision Trees</li>
+                <li>Support Vector Machines (SVM)</li>
+                <li>K-Nearest Neighbors (KNN)</li>
+                <li>Random Forest</li>
+                <li>K-Means Clustering</li>
+            </ul>
+            
+            <p>Each algorithm has its strengths and weaknesses, and the choice of algorithm depends on the specific problem being solved, the nature of the data, and the required accuracy.</p>
+        </section>
+        
+        <section class="chapter">
+            <h2>Chapter 3: Applications of Machine Learning</h2>
+            <p>Machine learning has a wide range of applications across various industries:</p>
+            
+            <div class="selection-area">
+                <p><strong>Selectable Text Example:</strong> In healthcare, ML is used for diagnosis, personalized treatment, drug discovery, and predicting patient outcomes. In finance, it's used for fraud detection, algorithmic trading, and risk assessment. In transportation, ML powers autonomous vehicles and route optimization systems.</p>
+            </div>
+            
+            <p>Other significant applications include natural language processing, computer vision, recommendation systems, and predictive maintenance in manufacturing.</p>
+        </section>
+        
+        <footer>
+            <p>© 2025 Interactive Learning Publications</p>
+        </footer>
+    </div>
+    
+    <!-- Configuration for the chatbot widget -->
+    <script>
+        window.RAG_CHATBOT_CONFIG = {
+            apiUrl: 'http://localhost:8000',
+            collectionId: '12345678-1234-5678-1234-567812345678', // Replace with actual collection ID
+            containerId: 'rag-chatbot-container',
+            theme: 'light'
+        };
+    </script>
+    
+    <!-- Load the RAG Chatbot Widget -->
+    <script src="embed_widget.js"></script>
+    
+    <script>
+        // Add some interactivity to demonstrate text selection
+        document.addEventListener('mouseup', function() {
+            const selection = window.getSelection();
+            if (selection.toString().trim() !== '') {
+                console.log('Selected text:', selection.toString());
+                // In a real implementation, this would highlight the selected text
+                // and potentially provide an option to ask the chatbot about it
+            }
+        });
+        
+        // Example of how to trigger the chatbot with selected text
+        function askAboutSelection() {
+            const selection = window.getSelection();
+            if (selection.toString().trim() !== '') {
+                // This would send the selected text to the chatbot
+                // In this demo, we'll just log it
+                console.log('Asking chatbot about:', selection.toString());
+                
+                // In a real implementation, we would call a method on the widget
+                // to pre-fill the input with the selected text
+            } else {
+                alert('Please select some text first');
+            }
+        }
+    </script>
+</body>
+</html>

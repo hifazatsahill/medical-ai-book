@@ -1,0 +1,355 @@
+openapi: 3.0.0
+info:
+  title: Integrated RAG Chatbot API
+  description: API for the Integrated RAG Chatbot for Interactive Book
+  version: 1.0.0
+  contact:
+    name: RAG Chatbot Development Team
+
+servers:
+  - url: https://api.rag-chatbot.com/v1
+    description: Production server
+  - url: https://staging.rag-chatbot.com/v1
+    description: Staging server
+
+paths:
+  /health:
+    get:
+      summary: Health check endpoint
+      description: Returns the health status of the API
+      responses:
+        '200':
+          description: API is healthy
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: "healthy"
+                  timestamp:
+                    type: string
+                    format: date-time
+                    example: "2025-12-23T10:00:00Z"
+
+  /collections:
+    post:
+      summary: Create a new book collection
+      description: Creates a new collection for book content with metadata
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - title
+                - author
+                - content
+              properties:
+                title:
+                  type: string
+                  description: Title of the book
+                  example: "Interactive Book on AI"
+                author:
+                  type: string
+                  description: Author of the book
+                  example: "John Doe"
+                content:
+                  type: string
+                  description: Full text content of the book
+                  example: "This is the full content of the book..."
+                metadata:
+                  type: object
+                  description: Additional book metadata
+                  example:
+                    language: "en"
+                    publication_date: "2025-01-01"
+      responses:
+        '201':
+          description: Collection created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    description: Unique identifier for the collection
+                    example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+                  message:
+                    type: string
+                    example: "Collection created successfully"
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+
+  /collections/{collectionId}:
+    get:
+      summary: Get collection details
+      description: Retrieve details about a specific book collection
+      parameters:
+        - name: collectionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique identifier of the collection
+      responses:
+        '200':
+          description: Collection details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    format: uuid
+                    example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+                  title:
+                    type: string
+                    example: "Interactive Book on AI"
+                  author:
+                    type: string
+                    example: "John Doe"
+                  metadata:
+                    type: object
+                    example:
+                      language: "en"
+                      publication_date: "2025-01-01"
+        '404':
+          description: Collection not found
+        '500':
+          description: Internal server error
+
+  /collections/{collectionId}/query:
+    post:
+      summary: Query book content
+      description: Ask questions about the book content using RAG
+      parameters:
+        - name: collectionId
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: Unique identifier of the collection
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - query
+                - sessionId
+              properties:
+                query:
+                  type: string
+                  description: The question to ask about the book content
+                  example: "What are the main concepts discussed in chapter 3?"
+                sessionId:
+                  type: string
+                  description: Session identifier for the user
+                  example: "session-abc123"
+                selectedText:
+                  type: string
+                  description: Optional selected text to limit query scope
+                  example: "This is the specific text the user has selected..."
+      responses:
+        '200':
+          description: Query processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  response:
+                    type: string
+                    description: The generated response based on the book content
+                    example: "Chapter 3 discusses the fundamental concepts of AI..."
+                  sources:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        chunkId:
+                          type: string
+                          format: uuid
+                          example: "chunk-123"
+                        content:
+                          type: string
+                          example: "Original text from the book that was used..."
+                        relevanceScore:
+                          type: number
+                          format: float
+                          example: 0.95
+                  sessionId:
+                    type: string
+                    example: "session-abc123"
+        '400':
+          description: Invalid input
+        '404':
+          description: Collection not found
+        '429':
+          description: Rate limit exceeded (per session)
+        '500':
+          description: Internal server error
+
+  /sessions:
+    post:
+      summary: Create a new session
+      description: Creates a new user session for the chatbot interaction
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                bookId:
+                  type: string
+                  format: uuid
+                  description: ID of the book for this session
+                  example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+                metadata:
+                  type: object
+                  description: Additional session metadata
+                  example:
+                    userAgent: "Mozilla/5.0..."
+                    referer: "https://example.com/book"
+      responses:
+        '201':
+          description: Session created successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+                    description: Unique identifier for the session
+                    example: "session-abc123"
+                  expiresAt:
+                    type: string
+                    format: date-time
+                    example: "2025-12-23T11:00:00Z"
+        '400':
+          description: Invalid input
+        '500':
+          description: Internal server error
+
+  /sessions/{sessionId}:
+    get:
+      summary: Get session details
+      description: Retrieve details about a specific session
+      parameters:
+        - name: sessionId
+          in: path
+          required: true
+          schema:
+            type: string
+          description: Unique identifier of the session
+      responses:
+        '200':
+          description: Session details retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  sessionId:
+                    type: string
+                    example: "session-abc123"
+                  bookId:
+                    type: string
+                    format: uuid
+                    example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+                  createdAt:
+                    type: string
+                    format: date-time
+                    example: "2025-12-23T10:00:00Z"
+                  lastAccessed:
+                    type: string
+                    format: date-time
+                    example: "2025-12-23T10:30:00Z"
+                  conversationHistory:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        query:
+                          type: string
+                          example: "What is AI?"
+                        response:
+                          type: string
+                          example: "AI stands for Artificial Intelligence..."
+                        timestamp:
+                          type: string
+                          format: date-time
+                          example: "2025-12-23T10:05:00Z"
+        '404':
+          description: Session not found
+        '500':
+          description: Internal server error
+
+  /books/import:
+    post:
+      summary: Import book content
+      description: Import book content in various formats (EPUB, MOBI, DOCX)
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required:
+                - file
+                - title
+                - author
+              properties:
+                file:
+                  type: string
+                  format: binary
+                  description: The book file to import
+                title:
+                  type: string
+                  description: Title of the book
+                  example: "Interactive Book on AI"
+                author:
+                  type: string
+                  description: Author of the book
+                  example: "John Doe"
+                metadata:
+                  type: object
+                  description: Additional book metadata
+                  example:
+                    language: "en"
+                    publication_date: "2025-01-01"
+      responses:
+        '200':
+          description: Book imported and processed successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  bookId:
+                    type: string
+                    format: uuid
+                    example: "a1b2c3d4-e5f6-7890-1234-567890abcdef"
+                  message:
+                    type: string
+                    example: "Book imported and processed successfully"
+                  chunkCount:
+                    type: integer
+                    example: 45
+        '400':
+          description: Invalid input or unsupported format
+        '500':
+          description: Internal server error

@@ -1,0 +1,581 @@
+openapi: 3.0.3
+info:
+  title: AI Medical Laboratory Diagnostics Book API
+  description: API for the interactive digital book on AI in Medical Laboratory Diagnostics
+  version: 1.0.0
+  contact:
+    name: Development Team
+    email: support@medical-ai-book.com
+
+servers:
+  - url: https://api.medical-ai-book.com
+    description: Production server
+  - url: http://localhost:8000
+    description: Development server
+
+paths:
+  /api/auth/register:
+    post:
+      summary: Register a new user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegistration'
+      responses:
+        '201':
+          description: User registered successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserResponse'
+        '400':
+          description: Invalid input or user already exists
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/login:
+    post:
+      summary: Login user
+      tags:
+        - Authentication
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserLogin'
+      responses:
+        '200':
+          description: Login successful
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/auth/profile:
+    get:
+      summary: Get user profile
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+    put:
+      summary: Update user profile
+      tags:
+        - Authentication
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserProfileUpdate'
+      responses:
+        '200':
+          description: User profile updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserProfile'
+        '400':
+          description: Invalid input
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/book/chapters:
+    get:
+      summary: Get all book chapters
+      tags:
+        - Book Content
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 20
+        - name: offset
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 0
+      responses:
+        '200':
+          description: List of chapters retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  chapters:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/BookChapter'
+                  total:
+                    type: integer
+
+  /api/book/chapters/{slug}:
+    get:
+      summary: Get specific chapter by slug
+      tags:
+        - Book Content
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Chapter retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BookChapter'
+        '404':
+          description: Chapter not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/book/search:
+    get:
+      summary: Search across book content
+      tags:
+        - Book Content
+      parameters:
+        - name: query
+          in: query
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 10
+      responses:
+        '200':
+          description: Search results retrieved successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  results:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/SearchResult'
+                  total:
+                    type: integer
+
+  /api/chat/query:
+    post:
+      summary: Submit query to RAG system
+      tags:
+        - Chatbot
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChatQuery'
+      responses:
+        '200':
+          description: Query response retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Invalid query
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/chat/query-selected:
+    post:
+      summary: Query with selected text context
+      tags:
+        - Chatbot
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SelectedTextQuery'
+      responses:
+        '200':
+          description: Query response retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChatResponse'
+        '400':
+          description: Invalid query or selected text
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/personalize/chapter:
+    post:
+      summary: Get personalized chapter content
+      tags:
+        - Personalization
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PersonalizationRequest'
+      responses:
+        '200':
+          description: Personalized content retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PersonalizedChapter'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /api/translate/chapter:
+    post:
+      summary: Get translated chapter content (Urdu)
+      tags:
+        - Translation
+      security:
+        - BearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TranslationRequest'
+      responses:
+        '200':
+          description: Translated content retrieved successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TranslatedChapter'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    UserRegistration:
+      type: object
+      required:
+        - email
+        - name
+        - password
+        - profession
+        - experience_level
+        - technical_background
+      properties:
+        email:
+          type: string
+          format: email
+          example: user@example.com
+        name:
+          type: string
+          example: "John Doe"
+        password:
+          type: string
+          format: password
+          example: "SecurePassword123"
+        profession:
+          type: string
+          enum: [pathologist, lab_technician, student, software_engineer, researcher]
+          example: "student"
+        experience_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+          example: "beginner"
+        technical_background:
+          type: string
+          enum: [medical, software, mixed]
+          example: "mixed"
+
+    UserLogin:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        email:
+          type: string
+          format: email
+        name:
+          type: string
+        access_token:
+          type: string
+        token_type:
+          type: string
+          default: "bearer"
+
+    LoginResponse:
+      type: object
+      properties:
+        access_token:
+          type: string
+        token_type:
+          type: string
+          default: "bearer"
+        user:
+          $ref: '#/components/schemas/UserResponse'
+
+    UserProfile:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        user_id:
+          type: string
+          format: uuid
+        profession:
+          type: string
+          enum: [pathologist, lab_technician, student, software_engineer, researcher]
+        experience_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        technical_background:
+          type: string
+          enum: [medical, software, mixed]
+        preferences:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    UserProfileUpdate:
+      type: object
+      properties:
+        profession:
+          type: string
+          enum: [pathologist, lab_technician, student, software_engineer, researcher]
+        experience_level:
+          type: string
+          enum: [beginner, intermediate, advanced]
+        technical_background:
+          type: string
+          enum: [medical, software, mixed]
+        preferences:
+          type: object
+          additionalProperties: true
+
+    BookChapter:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        slug:
+          type: string
+        content:
+          type: string
+        content_urdu:
+          type: string
+        chapter_number:
+          type: integer
+        word_count:
+          type: integer
+        reading_time:
+          type: integer
+        metadata:
+          type: object
+          additionalProperties: true
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+
+    SearchResult:
+      type: object
+      properties:
+        chapter_id:
+          type: string
+          format: uuid
+        chapter_title:
+          type: string
+        content_snippet:
+          type: string
+        relevance_score:
+          type: number
+          format: float
+
+    ChatQuery:
+      type: object
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          example: "What are the applications of AI in pathology?"
+        context_type:
+          type: string
+          enum: [full_book]
+          default: "full_book"
+
+    SelectedTextQuery:
+      type: object
+      required:
+        - query
+        - selected_text
+      properties:
+        query:
+          type: string
+          example: "Explain this concept in more detail"
+        selected_text:
+          type: string
+          example: "AI in pathology involves analyzing tissue samples using machine learning algorithms..."
+        context_type:
+          type: string
+          enum: [selected_text]
+          default: "selected_text"
+
+    ChatResponse:
+      type: object
+      properties:
+        response:
+          type: string
+        sources:
+          type: array
+          items:
+            type: string
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+
+    PersonalizationRequest:
+      type: object
+      required:
+        - chapter_id
+        - user_profile
+      properties:
+        chapter_id:
+          type: string
+          format: uuid
+        user_profile:
+          $ref: '#/components/schemas/UserProfile'
+
+    PersonalizedChapter:
+      type: object
+      properties:
+        original_content:
+          type: string
+        personalized_content:
+          type: string
+        adaptation_notes:
+          type: array
+          items:
+            type: string
+
+    TranslationRequest:
+      type: object
+      required:
+        - chapter_id
+        - target_language
+      properties:
+        chapter_id:
+          type: string
+          format: uuid
+        target_language:
+          type: string
+          default: "ur"
+
+    TranslatedChapter:
+      type: object
+      properties:
+        original_content:
+          type: string
+        translated_content:
+          type: string
+        source_language:
+          type: string
+          default: "en"
+        target_language:
+          type: string
+          default: "ur"
+
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: object
+          properties:
+            code:
+              type: string
+            message:
+              type: string
