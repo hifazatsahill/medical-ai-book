@@ -1,3 +1,5 @@
+'use client';
+
 import React, { useState } from 'react';
 import { userAPI } from '@/services/api';
 import MarkdownRenderer from '@/components/Book/MarkdownRenderer';

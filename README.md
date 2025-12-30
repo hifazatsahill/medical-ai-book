@@ -173,6 +173,31 @@ This project follows strict quality standards for medical content accuracy. All 
 - Follow security best practices
 - Support cross-browser compatibility
 
+## Deployment
+
+### Vercel Deployment
+
+Both frontend and backend can be deployed on Vercel:
+
+1. **Backend Deployment**:
+   - Navigate to the `backend` directory
+   - The `vercel.json` file configures the backend as a Python serverless function
+   - Set the required environment variables in the Vercel dashboard:
+     - `COHERE_API_KEY`
+     - `QDRANT_URL`
+     - `QDRANT_API_KEY`
+     - `DATABASE_URL`
+     - `DEBUG`
+
+2. **Frontend Deployment**:
+   - Navigate to the `frontend` directory
+   - The `vercel.json` file configures the Next.js frontend
+   - Set the required environment variables in the Vercel dashboard:
+     - `NEXT_PUBLIC_API_BASE_URL`: URL of your deployed backend
+     - `NEXT_PUBLIC_FRONTEND_URL`: URL of your deployed frontend
+
+For detailed deployment instructions, see the [DEPLOYMENT_GUIDE.md](DEPLOYMENT_GUIDE.md) file.
+
 ## License
 
 This project is designed for educational purposes in medical diagnostics. Content is not a substitute for professional medical advice.

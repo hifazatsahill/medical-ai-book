@@ -14,6 +14,7 @@ python-dotenv==1.0.0
 better-exceptions==0.3.3
 pytest==7.4.3
 httpx==0.25.2
+starlette==0.27.0
 # requirements.txt
 fastapi
 uvicorn
