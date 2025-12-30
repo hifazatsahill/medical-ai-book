@@ -73,3 +73,4 @@ frontend/build/
 functions/
 middleware/
 api/
+.env.example
